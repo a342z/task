@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
-
+import { HttpClient } from '@angular/common/http';
+import { Country } from '../model/country';
+import { Ip } from '../model/ip';
+import { map, mapTo, mergeMap } from 'rxjs/operators';
 /* use those apis to get user geolocations and nationality all apis accept get request
 https://backofficeapi.online-tkt.com/api/GetAllCountriesByLangName?LangCode=en
 returns all countries with country codes
@@ -16,5 +19,25 @@ https://ipapi.co/${ip-adress}/json/
 })
 export class MyApisService {
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
+
+  getCountries() {
+    return this.http.get<Country[]>("https://backofficeapi.online-tkt.com/api/GetAllCountriesByLangName?LangCode=en");
+  }
+
+
+  // getIpAddress(){
+  //   return this.http.get<Ip>("https://api.ipify.org/?format=json");
+  // }
+
+  // getCountryData(ip:string){
+  //   return this.http.get<any>(`https://ipapi.co/${ip}/json/`);
+  // }
+
+  getCountryKeyCode() {
+    return this.http.get<Ip>("https://api.ipify.org/?format=json")
+      .pipe(mergeMap((data) => this.http.get<any>(`https://ipapi.co/${data.ip}/json/`)));
+  }
+
+
 }

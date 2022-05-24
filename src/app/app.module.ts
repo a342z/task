@@ -4,6 +4,14 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppComponent } from './app.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { WelcomeComponent } from './components/welcome/welcome.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpClientModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+
+
+import { MaterialModule } from './material.module';
+import { AppRoutingModule } from './app-routing.module';
+
 
 @NgModule({
   declarations: [
@@ -12,7 +20,15 @@ import { WelcomeComponent } from './components/welcome/welcome.component';
     WelcomeComponent
   ],
   imports: [
-    BrowserModule
+    BrowserModule,
+    BrowserAnimationsModule,
+    HttpClientModule,
+    MaterialModule,
+    ReactiveFormsModule,
+    AppRoutingModule,
+
+
+ 
   ],
   providers: [],
   bootstrap: [AppComponent]
