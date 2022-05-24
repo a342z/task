@@ -2,16 +2,13 @@
   width: 100%;
 }
 
-.width-50 {
-  width: 50%;
-}
-
 
 .wrapper{
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
+    width: 50%;
 }
 
 .header-card{
@@ -37,4 +34,11 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+@media (max-width: 768px){
+  .wrapper{
+    width: 100%;
+  }
+
 }
