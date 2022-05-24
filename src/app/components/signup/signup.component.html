@@ -60,7 +60,8 @@
 
                 <div class="">
                     <mat-form-field appearance="fill" class="full-width">
-                        <input matInput placeholder="password" formControlName="password"
+                        <mat-label>Password</mat-label>
+                        <input matInput  formControlName="password"
                             (keypress)="disableArabic($event)" type="password" />
                         <mat-error *ngIf="signupForm.controls.password.hasError('required')">This Field is required
                         </mat-error>
@@ -71,7 +72,8 @@
                 </div>
                 <div class="">
                     <mat-form-field appearance="fill" class="full-width">
-                        <input matInput placeholder="confirm password" formControlName="confirmPassword"
+                        <mat-label>Confirm Password</mat-label>
+                        <input matInput formControlName="confirmPassword"
                             type="password" />
 
                         <mat-error *ngIf="signupForm.controls.confirmPassword.hasError('required')">This Field is
