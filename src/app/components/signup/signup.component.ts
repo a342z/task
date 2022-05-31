@@ -1,10 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Country } from 'src/app/model/country';
 import { MyApisService } from 'src/app/services/my-apis.service';
 import { FormControl, FormGroup, Validators, FormBuilder, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { merge } from 'rxjs';
-import { mapTo } from 'rxjs/operators';
+import { merge, Subscription, Subject } from 'rxjs';
+import { mapTo, takeUntil } from 'rxjs/operators';
+
 
 
 @Component({
@@ -12,11 +13,12 @@ import { mapTo } from 'rxjs/operators';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css']
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent implements OnInit, OnDestroy {
   countries: Country[];
   countryCode: string;
   signupForm: FormGroup;
-  x: any;
+  destroy$: Subject<boolean> = new Subject<boolean>();
+
   constructor(
     private api: MyApisService,
     private formBuilder: FormBuilder,
@@ -24,6 +26,7 @@ export class SignupComponent implements OnInit {
   ) { }
 
 
+  //to prevent the user from typing any arabic input in name input field
   disableArabic(event: any) {
     const arabicRegex = /[\u0600-\u06ff]|[\u0750-\u077f]|[\ufb50-\ufbc1]|[\ufbd3-\ufd3f]|[\ufd50-\ufd8f]|[\ufd92-\ufdc7]|[\ufe70-\ufefc]|[\uFDF0-\uFDFD]/;
     if (arabicRegex.test(event.key)) {
@@ -46,7 +49,7 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {
     this.signupForm = this.formBuilder.group({
       name: ['', [Validators.required, nameValidator]],
-      nationality: ['',Validators.required],
+      nationality: ['', Validators.required],
       email: ['', [Validators.email, Validators.required]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       confirmPassword: ['', Validators.required]
@@ -54,36 +57,36 @@ export class SignupComponent implements OnInit {
       {
         validators: mustMatch('password', 'confirmPassword')
       }
-    ),
+    )
 
 
 
 
+    //Getting list of countires from api, and passing them to select input
+    this.api.getCountries().pipe(takeUntil(this.destroy$)).subscribe(
+      data => this.countries = data
+    )
 
-      this.api.getCountries().subscribe(
-        data => this.countries = data
-      )
-
-    this.api.getCountryKeyCode().subscribe(
+    //Getting User's Country Key Code, and updating the select value in form to display user's country by default
+    this.api.getCountryKeyCode().pipe(takeUntil(this.destroy$)).subscribe(
       data => {
-        // this.countryCode = data.country_code
-        this.signupForm.patchValue({nationality: data.country_code })
-
+        this.signupForm.patchValue({ nationality: data.country_code })
       }
     )
-    // this.api.getIpAddress().subscribe(
-    //   data => {
-    //     this.api.getCountryData(data.ip).subscribe(
-    //       data => this.countryCode = data.country_code
-    //     )
-    //   }
-    // )
+
 
 
   }
 
+  ngOnDestroy() {
+    // To Stop all the subscriptions handled with 'takeUntil'
+    this.destroy$.next(true);
+    this.destroy$.unsubscribe();
+  }
+
 }
 
+//Name Validation, To make sure name input only has english letters and space
 function nameValidator(control: AbstractControl): ValidationErrors | null {
   const name: string = control.value;
   const regex = /^[a-zA-Z\s]*$/;
@@ -94,6 +97,7 @@ function nameValidator(control: AbstractControl): ValidationErrors | null {
   }
 }
 
+//Confirm Password Validation, To ensure that password and confirm passwords input fields are the same
 function mustMatch(controlName: string, matchingControlName: string) {
   return (formGroup: FormGroup) => {
     const control = formGroup.controls[controlName];

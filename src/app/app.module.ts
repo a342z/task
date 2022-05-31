@@ -9,15 +9,17 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
-import { MaterialModule } from './material.module';
+import { MaterialModule } from './modules/material.module';
 import { AppRoutingModule } from './app-routing.module';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
     SignupComponent,
-    WelcomeComponent
+    WelcomeComponent,
+    NotFoundComponent
   ],
   imports: [
     BrowserModule,

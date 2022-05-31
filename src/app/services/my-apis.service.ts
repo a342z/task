@@ -25,15 +25,7 @@ export class MyApisService {
     return this.http.get<Country[]>("https://backofficeapi.online-tkt.com/api/GetAllCountriesByLangName?LangCode=en");
   }
 
-
-  // getIpAddress(){
-  //   return this.http.get<Ip>("https://api.ipify.org/?format=json");
-  // }
-
-  // getCountryData(ip:string){
-  //   return this.http.get<any>(`https://ipapi.co/${ip}/json/`);
-  // }
-
+  //Getting user's IP-address from first api, then using that IP in another api to get user's country data
   getCountryKeyCode() {
     return this.http.get<Ip>("https://api.ipify.org/?format=json")
       .pipe(mergeMap((data) => this.http.get<any>(`https://ipapi.co/${data.ip}/json/`)));
